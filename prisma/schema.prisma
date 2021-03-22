@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model address {
+  ID_Address    Int             @id @default(autoincrement())
+  street_name   String          @db.VarChar(30)
+  street_number String          @db.VarChar(10)
+  ID_ZIP        Int
+  zip_code      zip_code        @relation(fields: [ID_ZIP], references: [ID_ZIP])
+  order_history order_history[]
+  user          user[]
+
+  @@index([ID_ZIP], name: "FK_Address_ZIP_code")
+}
+
+model cart {
+  ID_Cart   Int         @id @default(autoincrement())
+  ID_User   Int
+  user      user        @relation(fields: [ID_User], references: [ID_User])
+  cart_item cart_item[]
+
+  @@index([ID_User], name: "FK_Cart_User")
+}
+
+model cart_item {
+  ID_Cart_item Int     @id @default(autoincrement())
+  amount_ci    Int     @default(1)
+  ID_Product   Int
+  ID_Cart      Int
+  cart         cart    @relation(fields: [ID_Cart], references: [ID_Cart])
+  product      product @relation(fields: [ID_Product], references: [ID_Product])
+
+  @@index([ID_Cart], name: "FK_Cart_item_Cart")
+  @@index([ID_Product], name: "FK_Cart_item_Product")
+}
+
+model category {
+  ID_Category   Int       @id @default(autoincrement())
+  name_c        String    @db.VarChar(20)
+  description_c String    @db.VarChar(200)
+  product       product[]
+}
+
+model delivery_type {
+  ID_Delivery_type Int             @id @default(autoincrement())
+  method_name_dt   String          @db.VarChar(50)
+  fee_dt           Decimal         @default(0.00) @db.Decimal(10, 2)
+  description_dt   String?         @db.VarChar(200)
+  order_history    order_history[]
+}
+
+model order_history {
+  ID_Order         Int               @id @default(autoincrement())
+  date_ordered     DateTime?         @db.Timestamp(0)
+  current_status   String            @db.VarChar(20)
+  date_delivery    DateTime?         @db.Timestamp(0)
+  total_price      Decimal           @db.Decimal(10, 2)
+  ID_User          Int
+  ID_Delivery_type Int
+  ID_Payment_type  Int
+  ID_Address       Int
+  address          address           @relation(fields: [ID_Address], references: [ID_Address])
+  delivery_type    delivery_type     @relation(fields: [ID_Delivery_type], references: [ID_Delivery_type])
+  payment_type     payment_type      @relation(fields: [ID_Payment_type], references: [ID_Payment_type])
+  user             user              @relation(fields: [ID_User], references: [ID_User])
+  ordered_product  ordered_product[]
+
+  @@index([ID_Address], name: "FK_Order_Address")
+  @@index([ID_Delivery_type], name: "FK_Order_Delivery_type")
+  @@index([ID_Payment_type], name: "FK_Order_Payment_type")
+  @@index([ID_User], name: "FK_Order_User")
+}
+
+model ordered_product {
+  ID_Ordered_product Int           @id @default(autoincrement())
+  amount_op          Int
+  ID_Order           Int
+  ID_Product         Int
+  order_history      order_history @relation(fields: [ID_Order], references: [ID_Order])
+  product            product       @relation(fields: [ID_Product], references: [ID_Product])
+
+  @@index([ID_Order], name: "FK_Ordered_product_Order")
+  @@index([ID_Product], name: "FK_Ordered_product_Product")
+}
+
+model payment_type {
+  ID_Payment_type Int             @id @default(autoincrement())
+  method_name_pt  String          @db.VarChar(50)
+  fee_pt          Decimal         @default(0.00) @db.Decimal(10, 2)
+  description_pt  String?         @db.VarChar(200)
+  order_history   order_history[]
+}
+
+model product {
+  ID_Product      Int               @id @default(autoincrement())
+  name_p          String            @db.VarChar(50)
+  price           Decimal           @db.Decimal(10, 2)
+  description_p   String            @db.VarChar(200)
+  tax_p           Int               @default(21)
+  color           String?           @db.VarChar(15)
+  size            String?           @db.VarChar(20)
+  ID_Category     Int
+  category        category          @relation(fields: [ID_Category], references: [ID_Category])
+  cart_item       cart_item[]
+  ordered_product ordered_product[]
+
+  @@index([ID_Category], name: "FK_Product_Category")
+}
+
+model stock {
+  ID_Product Int @id
+  amount_s   Int @default(0)
+}
+
+model user {
+  ID_User       Int             @id @default(autoincrement())
+  login         String          @db.VarChar(20)
+  password      String          @db.VarChar(200)
+  first_name    String          @db.VarChar(20)
+  last_name     String          @db.VarChar(20)
+  credit        Decimal         @default(0.00) @db.Decimal(10, 2)
+  email         String          @db.VarChar(50)
+  phone         String          @db.VarChar(15)
+  isAdmin       Boolean         @default(false)
+  ID_Address    Int
+  address       address         @relation(fields: [ID_Address], references: [ID_Address])
+  cart          cart[]
+  order_history order_history[]
+
+  @@index([ID_Address], name: "FK_User_Address")
+}
+
+model zip_code {
+  ID_ZIP  Int       @id
+  city    String    @db.VarChar(50)
+  address address[]
+}
