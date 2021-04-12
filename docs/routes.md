@@ -10,7 +10,7 @@ TODO
 POST /auth/login
 ```
 
-+ `params`: username, password
+- `params`: username, password
 
 Example:
 
@@ -26,10 +26,31 @@ If succesful, it returns a **JWT**:
 
 ... otherwise code 401
 
+### Verify validity of JWT Token
+
+```
+GET /auth/login
+```
+
+... returns `200 OK`
+
+```
+{
+"userId": 1,
+"username": "tomas"
+}
+```
+
+OR
+
+... `401 unauthorized`
+
 ---
+
 ## CART ITEMS
 
 User has to be logged in (JWT bearer token in request's headers)
+
 ```
 GET /cart
 ```

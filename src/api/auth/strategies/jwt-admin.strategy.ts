@@ -20,7 +20,7 @@ export class JwtAdminStrategy extends PassportStrategy(Strategy) {
 
     //TODO
     //fetch by username, isAdmin? allow : throw Exception
-    console.log(payload.username);
+    // console.log(payload.username);
     //throw new UnauthorizedException("Random shit");
     return { userId: payload.sub, username: payload.username };
   }

@@ -18,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // we could add admin stuff here probably...
     //ValidatedUserType
 
-    console.log(payload);
+    // console.log(payload);
     // we could fetch a user from DB
     //throw new UnauthorizedException("Random shit");
     return { userId: payload.sub, username: payload.username };
