@@ -22,7 +22,7 @@ export class AuthController {
     //req.body: CreateNewUserType
     const { didOkay, message } = await this.authService.register(user);
     if (didOkay) {
-      return message;
+      return { statusCode: 200, message };
     } else {
       throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
