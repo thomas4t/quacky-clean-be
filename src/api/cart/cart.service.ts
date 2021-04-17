@@ -1,7 +1,6 @@
 import { Prisma } from ".prisma/client";
-import { Inject, Injectable } from "@nestjs/common";
-import { product } from "@prisma/client";
-import { exists } from "node:fs";
+import { Injectable } from "@nestjs/common";
+
 import { PrismaService } from "src/database/prisma.service";
 import { UsersService } from "../users/users.service";
 
