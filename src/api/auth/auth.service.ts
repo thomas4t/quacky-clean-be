@@ -76,8 +76,9 @@ export class AuthService {
       },
     });
 
+    let newUser: user;
     if (existingAddress) {
-      await this.prisma.user.create({
+      newUser = await this.prisma.user.create({
         data: {
           ...userData,
           address: {
@@ -86,7 +87,7 @@ export class AuthService {
         },
       });
     } else {
-      await this.prisma.user.create({
+      newUser = await this.prisma.user.create({
         data: {
           ...userData,
           address: {
@@ -104,6 +105,11 @@ export class AuthService {
         },
       });
     }
+
+    //Create cart for new user
+    await this.prisma.cart.create({
+      data: { user: { connect: { ID_User: newUser.ID_User } } },
+    });
 
     return { didOkay: true, message: "Successfuly added new account" };
   }
